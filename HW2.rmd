@@ -1,0 +1,135 @@
+#### Homework 2 - Numeric Prediction, Logistic Regression, and Feature Selection ####
+
+#### Part I. Numeric Prediction in R ####
+```{r,warning=FALSE,message=FALSE}
+
+library(caret)
+library(e1071)
+library(rpart)
+library(rpart.plot)
+library(glmnet)
+```
+# Download "purchase.csv" data file from Canvas. Make sure you read the description of Question 1 (in HW2 file) before doing this part. Import the data into R
+
+```{r,warning=FALSE,message=FALSE}
+purchase = read.csv("purchase.csv")
+```
+
+
+
+# Check target variable
+```{r,warning=FALSE,message=FALSE}
+
+summary(purchase$Spending)
+set.seed(1)
+
+# createDataPartition preserves distribution of the 
+# target variable in train/test partitions
+train_rows <- createDataPartition(y = purchase$Spending, p =0.70 , list = F)
+
+p_train <- purchase[train_rows,]
+p_test <- purchase[-train_rows,]
+```
+
+# 1. Use 5-fold cross-validation to evaluate the performance of the regression tree model on this dataset, report the average (1) MAE; (2) RMSE. Then, build a single regression tree model on the entire dataset, plot the tree, and answer the following two questions.
+# (a) How many decision nodes are there in your tree?
+# (b) Pick one decision rule from your tree and interpret it
+
+```{r,warning=FALSE,message=FALSE}
+set.seed(1)
+cv = createFolds(y = purchase$Spending, k=5) 
+```
+
+```{r,warning=FALSE,message=FALSE}
+
+rmses_tree = c() #initializing for CV
+maes_tree = c()
+
+for (test_fold in cv){
+  p_train_tree = purchase[-test_fold,] 
+  p_test_tree = purchase[test_fold,] 
+  
+  tree_cv = rpart(Spending~., data = p_train_tree)
+  
+  pred = predict(tree_cv, p_test_tree)
+  
+  rmse = sqrt(mean((pred-p_test_tree[,23])^2))
+  mae = mean(abs(pred-p_test_tree[,23]))
+  rmses_tree = c(rmses_tree, rmse)
+  maes_tree = c(maes_tree, mae)
+}
+print(mean(rmses_tree))
+print(mean(maes_tree))
+
+```
+
+
+```{r,warning=FALSE,message=FALSE}
+# use entire dataset to build a single tree
+set.seed(1)
+tree <- rpart(Spending ~ . , data = p_train)
+
+prp(tree, varlen = 0)
+
+
+```
+
+
+# 2. Use 5-fold cross-validation to evaluate the performance of the linear regression model on this dataset, report the average (1) MAE; (2) RMSE.
+
+```{r,warning=FALSE,message=FALSE}
+
+rmses_lm = c() 
+maes_lm = c()
+
+for (test_fold in cv){
+  p_train_lm = purchase[-test_fold,] # training set in matrix
+  p_test_lm = purchase[test_fold,] # test set in matrix
+  
+  lm_model = lm(Spending~., data = p_train_lm)
+  
+  pred_lm = predict(lm_model, p_test_lm)
+  
+  rmse = sqrt(mean((pred_lm-p_test_lm[,23])^2))
+  mae = mean(abs(pred_lm-p_test_lm[,23]))
+  rmses_lm = c(rmses_lm, rmse)
+  maes_lm = c(maes_lm, mae)
+}
+```
+
+
+# performance evaluation
+
+```{r,warning=FALSE,message=FALSE}
+print(mean(rmses_lm))
+print(mean(maes_lm))
+```
+
+# 3. Use 5-fold cross-validation to evaluate the performance of the lasso regression model on this dataset, report the average (1) MAE; (2) RMSE. Next, build a single lasso regression model on the entire dataset. Which features have non-zero coefficients?
+
+
+
+
+# 4. Use 5-fold cross-validation to evaluate the performance of the ridge regression model on this dataset, report the average (1) MAE; (2) RMSE. Next, build a single ridge regression model on the entire dataset. Which features have non-zero coefficients?
+
+
+
+#### Part II. Logistic Regression and Feature Selection in R ####
+library(FSelectorRcpp)
+
+# 1. Follow the instructions in Question 2. Download the data. Manually add the attribute names (which are in spambase.names file) to the data file as the first line before or after importing the data into R.
+
+
+
+# 2. Use 5-fold cross-validation to evaluate the performance of the logistic regression model on this dataset, report the average (1) accuracy; (2) precision, recall, and F-measure of class "spam"; (3) AUC of class "spam".
+
+
+
+# 3. Perform feature selection using the Information Gain metric. Build the best logistic regression with the selected features. Note: you need to try different number of features (either manually or use a for loop). The "best" model is defined as the one with highest AUC for class "spam", evaluated using 5-fold cross-validation.
+
+
+
+# 4. Perform forward feature selection. Build the best logistic regression with the selected features. Note: you need to set the stopping criterion for forward selection yourself. The "best" model is defined as the one with the highest AUC for class "spam", evaluated using 5-fold cross-validation. Hint: try implementing this forward selection as a for-loop, with model building and evaluation as its sub-routine.
+
+
+
