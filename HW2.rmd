@@ -9,7 +9,7 @@ library(rpart)
 library(rpart.plot)
 library(glmnet)
 ```
-# Download "purchase.csv" data file from Canvas. Make sure you read the description of Question 1 (in HW2 file) before doing this part. Import the data into R
+# Download "purchase.csv" 
 
 ```{r,warning=FALSE,message=FALSE}
 purchase = read.csv("purchase.csv")
@@ -31,9 +31,7 @@ p_train <- purchase[train_rows,]
 p_test <- purchase[-train_rows,]
 ```
 
-# 1. Use 5-fold cross-validation to evaluate the performance of the regression tree model on this dataset, report the average (1) MAE; (2) RMSE. Then, build a single regression tree model on the entire dataset, plot the tree, and answer the following two questions.
-# (a) How many decision nodes are there in your tree?
-# (b) Pick one decision rule from your tree and interpret it
+# 1. Use 5-fold cross-validation to evaluate the performance of the regression tree model on this dataset, report the average (1) MAE; (2) RMSE.
 
 ```{r,warning=FALSE,message=FALSE}
 set.seed(1)
@@ -42,7 +40,7 @@ cv = createFolds(y = purchase$Spending, k=5)
 
 ```{r,warning=FALSE,message=FALSE}
 
-rmses_tree = c() #initializing for CV
+rmses_tree = c() 
 maes_tree = c()
 
 for (test_fold in cv){
