@@ -1,2 +1,2 @@
 # DA_Project
-Some analytics using R
+Machine Learning using R
